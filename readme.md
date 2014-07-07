@@ -14,6 +14,27 @@ Install with [npm](https://npmjs.org/package/gulp-safe)
 npm install --save-dev gulp-safe
 ```
 
+## Overview
+
+Here quick example of simple way usage:
+
+```javascript
+var gulp = require('gulp'),
+	safe = require('gulp-safe');
+
+gulp.task('make-my-awesome-files', function() {
+	var dest;
+
+	dest = "./my/dest/for/files";
+
+	return gulp.src("./src/my/files/*.json")
+		.pipe(someCoolPlugin())
+		.pipe(anotherCoolPlugin())
+		.pipe(safe(dest)) // here we go! just backup already existing files before they overwritten
+		.pipe(gulp.dest(dest));
+});
+```
+
 ## API
 
 ### safe(destination, [options])
@@ -48,24 +69,3 @@ Type: `Boolean`
 Default value: `"(%d)"`
 
 The sprintf format of postfix. Be careful with it, cause if you will do not use `%d` pattern inside it, your plugin can fall in infinite loop.
-
-## Example
-
-Here quick example of simple way usage:
-
-```javascript
-var gulp = require('gulp'),
-	safe = require('gulp-safe');
-
-gulp.task('make-my-awesome-files', function() {
-	var dest;
-
-	dest = "./my/dest/for/files";
-
-	return gulp.src("./src/my/files/*.json")
-		.pipe(someCoolPlugin())
-		.pipe(anotherCoolPlugin())
-		.pipe(safe(dest)) // here we go! just backup already existing files before they overwritten
-		.pipe(gulp.dest(dest));
-});
-```

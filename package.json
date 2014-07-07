@@ -1,0 +1,41 @@
+{
+  "name": "gulp-safe",
+  "version": "0.1.0",
+  "description": "Safe proxy for output files",
+  "main": "index.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/gobwas/gulp-safe.git"
+  },
+  "keywords": [
+    "gulpplugin",
+    "safe",
+    "backup",
+    "file",
+    "rename",
+    "postfix"
+  ],
+  "author": "Sergey Kamardin <gobwas@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/gobwas/gulp-safe/issues"
+  },
+  "homepage": "https://github.com/gobwas/gulp-safe",
+  "dependencies": {
+    "through2": "^0.5.1",
+    "lodash": "^2.4.1",
+    "gulp-util": "^2.2.19"
+  },
+  "devDependencies": {
+    "rimraf": "^2.2.8",
+    "vinyl": "^0.2.3",
+    "mocha": "^1.20.1",
+    "chai": "^1.9.1"
+  }
+}

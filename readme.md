@@ -80,7 +80,7 @@ Currying generator of file version. Function takes one argument - the file. Then
 ```js
 
 	safe("path", {
-		version: function(file) {
+		generator: function(file) {
 			return function(done) {
 				getSomeAsyncStuffWith(file)
 					.then(function(result) {

@@ -65,3 +65,37 @@ it("should create file without postfix, but save old version with postfix", func
 
     stream.end();
 });
+
+
+it("should call generator from options for existing file", function(done) {
+	var stream,
+		errors = [],
+		path, contents, f;
+
+    stream = safe("./", {
+    	generator: function(file) {
+    		var error;
+    		try {
+    			assert.equal(file, f, "Generator called not with the given file");
+    		} catch (err) {
+    			error = err;
+    		}
+
+    		done(error);
+
+    		return function() {
+
+    		}
+    	}
+    });
+
+	path     = "./test/fixtures/test.json";
+	contents = fs.readFileSync(path);
+
+	stream.write((f = new File({
+		path:     path,
+		contents: new Buffer('')
+	})));
+
+    stream.end();
+});

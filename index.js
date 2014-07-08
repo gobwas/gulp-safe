@@ -8,9 +8,15 @@ var through2 = require("through2"),
 module.exports = function(dest, options) {
 	var whilst;
 
-	options = _.defaults(options, {
+	options = _.defaults(options || {}, {
 		backup: true,
-		format: "(%d)"
+		format: "(%d)",
+		generator: function(file) {
+			var version = 0;
+			return function(done) {
+				done(null, ++version);
+			}
+		}
 	});
 
 	whilst = function(value, test, iterator, callback) {
@@ -37,11 +43,11 @@ module.exports = function(dest, options) {
 		var self = this,
 			basepath, basename, name, extname, version;
 
-		basename = path.basename(file.path);
-		basepath = file.path.slice(0, file.path.lastIndexOf(basename));
-		extname  = path.extname(basename);
-		name     = basename.slice(0, basename.lastIndexOf(extname));
-		version  = 0;
+		basename  = path.basename(file.path);
+		basepath  = file.path.slice(0, file.path.lastIndexOf(basename));
+		extname   = path.extname(basename);
+		name      = basename.slice(0, basename.lastIndexOf(extname));
+		generator = options.generator(file);
 
 		whilst(
 			file.path,
@@ -51,7 +57,13 @@ module.exports = function(dest, options) {
 				});
 			},
 			function(done) {
-				done(null, basepath + name + util.format(options.format, ++version) + extname);
+				generator(function(err, version) {
+					if (err) {
+						return done(err);
+					}
+					
+					done(null, basepath + name + util.format(options.format, version) + extname);
+				});
 			},
 			function(err, finalpath) {
 				if (err) {

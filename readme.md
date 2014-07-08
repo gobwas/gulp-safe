@@ -53,10 +53,11 @@ Type: `Object`
 
 Then options object.
 
-Property     | Necessary | Type     | Plugin default value
--------------|-----------|----------|---------------------
-[backup]     | no        | `Boolean`| `true`
-[format]     | no        | `String` | `"(%d)"`
+Property     | Necessary | Type       | Plugin default value
+-------------|-----------|------------|---------------------
+[backup]     | no        | `Boolean`  | `true`
+[format]     | no        | `String`   | `"(%s)"`
+[generator]  | no        | `Function` | `null`
 
 #### options.backup
 Type: `Boolean`
@@ -66,6 +67,28 @@ Determines for which file append postfix - if true, existing file will get the p
 
 #### options.format
 Type: `Boolean`
-Default value: `"(%d)"`
+Default value: `"(%s)"`
 
-The sprintf format of postfix. Be careful with it, cause if you will do not use `%d` pattern inside it, your plugin can fall in infinite loop.
+The sprintf format of postfix. Be careful with it, cause if you will do not use `%s` pattern inside it, your plugin can fall in infinite loop.
+
+#### options.generator
+Type: `Function`
+Default value: `null`
+Return type: `Function`
+
+Currying generator of file version. Function takes one argument - the file. Then it must return initialized generator, that will be called in each time, when file is already exists. Initialized generator takes one argument, that is callback, that resolved in standard node way - `callback(err, version)`, where version is a `String`:
+```js
+
+	safe("path", {
+		version: function(file) {
+			return function(done) {
+				getSomeAsyncStuffWith(file)
+					.then(function(result) {
+						done(null, result);
+					})
+					.catch(done);
+			}
+		}
+	});
+
+```

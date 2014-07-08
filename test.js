@@ -6,7 +6,7 @@ var safe   = require("./index"),
 
 
 it("should create file with postfix on new version", function(done) {
-	var stream = safe("./", { backup: false }),
+	var stream = safe("./test/fixtures", { backup: false }),
 		errors = [],
 		path;
 
@@ -19,7 +19,7 @@ it("should create file with postfix on new version", function(done) {
 
 	stream.on('data', function(file) {
 		try {
-			assert.notEqual(file.path, path,            "Passed through file must be renamed");
+			assert.notEqual(file.path, path,              "Passed through file must be renamed");
 			assert.match(file.path, /^.*test\(1\).json$/, "Postfix is not correct");
 		} catch (err) {
 			errors.push(err);
@@ -34,7 +34,7 @@ it("should create file with postfix on new version", function(done) {
 });
 
 it("should create file without postfix, but save old version with postfix", function(done) {
-	var stream = safe("./", { backup: true }),
+	var stream = safe("./test/fixtures", { backup: true }),
 		errors = [],
 		path, contents;
 
@@ -72,7 +72,7 @@ it("should call generator from options for existing file", function(done) {
 		errors = [],
 		path, contents, f;
 
-    stream = safe("./", {
+    stream = safe("./test/fixtures", {
     	generator: function(file) {
     		var error;
     		try {

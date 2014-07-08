@@ -48,10 +48,11 @@ module.exports = function(dest, options) {
 		basepath  = file.path.slice(0, file.path.lastIndexOf(basename));
 		extname   = path.extname(basename);
 		name      = basename.slice(0, basename.lastIndexOf(extname));
+		
 		generator = options.generator(file);
 
 		whilst(
-			file.path,
+			basename,
 			function(version, done) {
 				fs.exists(path.resolve(dest, version), function(result) {
 					done(null, result);
@@ -63,16 +64,16 @@ module.exports = function(dest, options) {
 						return done(err);
 					}
 					
-					done(null, basepath + name + util.format(options.format, version) + extname);
+					done(null, name + util.format(options.format, version) + extname);
 				});
 			},
-			function(err, finalpath) {
+			function(err, finalname) {
 				if (err) {
-					return self.emit('error', new gutil.PluginError('gulp-safe', err));
+					return self.emit('error', new gutil.PluginError('gulp-safe', err.toString()));
 				}
 
 				// if previous file not found - just pass through
-				if (file.path === finalpath) {
+				if (basename === finalname) {
 					self.push(file);
 					done();
 					return;
@@ -80,9 +81,9 @@ module.exports = function(dest, options) {
 
 				if (options.backup) {
 					// save old version with prefix
-					ncp.ncp(path.resolve(dest, file.path), path.resolve(dest, finalpath), function (err) {
+					ncp.ncp(path.resolve(dest, basename), path.resolve(dest, finalname), function (err) {
 						if (err) {
-							self.emit('error', new gutil.PluginError('gulp-safe', err));
+							self.emit('error', new gutil.PluginError('gulp-safe', err.toString()));
 							done();
 						} else {
 							self.push(file);
@@ -91,7 +92,7 @@ module.exports = function(dest, options) {
 					});
 				} else {
 					// save new version with postfix
-					file.path = finalpath;
+					file.path = path.resolve(basepath, finalname);
 					self.push(file);
 					done();
 				}

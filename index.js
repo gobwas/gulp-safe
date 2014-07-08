@@ -1,6 +1,7 @@
 var through2 = require("through2"),
 	_        = require("lodash"),
 	fs       = require("fs"),
+	ncp      = require("ncp"),
 	path     = require("path"),
 	util     = require("util"),
 	gutil    = require("gulp-util");
@@ -79,16 +80,15 @@ module.exports = function(dest, options) {
 
 				if (options.backup) {
 					// save old version with prefix
-					fs.createReadStream(path.resolve(dest, file.path))
-						.pipe(fs.createWriteStream(path.resolve(dest, finalpath)))
-						.on("error", function(err) {
+					ncp.ncp(path.resolve(dest, file.path), path.resolve(dest, finalpath), function (err) {
+						if (err) {
 							self.emit('error', new gutil.PluginError('gulp-safe', err));
 							done();
-						})
-						.on("close", function() {
+						} else {
 							self.push(file);
 							done();
-						});
+						}
+					});
 				} else {
 					// save new version with postfix
 					file.path = finalpath;

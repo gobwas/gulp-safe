@@ -33,6 +33,34 @@ it("should create file with postfix on new version", function(done) {
     stream.end();
 });
 
+it("should create file with postfix on new version for related paths", function(done) {
+	var stream = safe("./test", { backup: false }),
+		errors = [],
+		path;
+
+	path = "./test/fixtures/test.json";
+
+	stream.write(new File({
+		path:     path,
+		contents: new Buffer('{"null": "null"}')
+	}));
+
+	stream.on('data', function(file) {
+		try {
+			assert.notEqual(file.path, path,              "Passed through file must be renamed");
+			assert.match(file.path, /^.*test\(1\).json$/, "Postfix is not correct");
+		} catch (err) {
+			errors.push(err);
+		}
+	});
+
+	stream.on('finish', function() {
+        done(errors[0]);
+    });
+
+    stream.end();
+});
+
 it("should create file without postfix, but save old version with postfix", function(done) {
 	var stream = safe("./test/fixtures", { backup: true }),
 		errors = [],

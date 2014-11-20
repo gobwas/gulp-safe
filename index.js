@@ -42,19 +42,22 @@ module.exports = function(dest, options) {
 
 	return through2.obj(function(file, enc, done) {
 		var self = this,
-			basepath, basename, name, extname, version;
+			basepath, basename, name, extname, version,
+			resolvedDest;
 
 		basename  = path.basename(file.path);
-		basepath  = file.path.slice(0, file.path.lastIndexOf(basename));
 		extname   = path.extname(basename);
 		name      = basename.slice(0, basename.lastIndexOf(extname));
+		basepath  = file.path.slice(0, file.path.lastIndexOf(basename));
+
+		resolvedDest = path.join(dest, path.relative(dest, basepath));
 		
 		generator = options.generator(file);
 
 		whilst(
 			basename,
 			function(version, done) {
-				fs.exists(path.resolve(dest, version), function(result) {
+				fs.exists(path.resolve(resolvedDest, version), function(result) {
 					done(null, result);
 				});
 			},
@@ -81,7 +84,7 @@ module.exports = function(dest, options) {
 
 				if (options.backup) {
 					// save old version with prefix
-					ncp.ncp(path.resolve(dest, basename), path.resolve(dest, finalname), function (err) {
+					ncp.ncp(path.resolve(resolvedDest, basename), path.resolve(resolvedDest, finalname), function (err) {
 						if (err) {
 							self.emit('error', new gutil.PluginError('gulp-safe', err.toString()));
 							done();

@@ -1,6 +1,6 @@
 {
   "name": "gulp-safe",
-  "version": "0.2.3",
+  "version": "0.2.4",
   "description": "Safe proxy for output files",
   "main": "index.js",
   "directories": {
